@@ -1,0 +1,36 @@
+.box-left in {
+  text-align: center;
+  position: relative;
+  top: 85px;
+}
+
+.back-btn {
+  position: fixed;
+  top: -5px;
+  left: 10px;
+  width: 60px;
+  height: 60px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 45px;
+  font-size: 50px;
+  color: white;
+  z-index: 100;
+}
+
+.search-book {
+  background-image: url('./icons/search.svg');
+  background-repeat: no-repeat;
+  background-position: right;
+  font-size: 1.2em;
+  outline: none;
+  width: 100%;
+  margin-top: 30px;
+
+}
+
+.list-book-top {
+  top: 0;
+  border-bottom: 2px solid #95a8d4;
+  display: flex;
+}
