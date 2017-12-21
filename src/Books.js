@@ -14,27 +14,38 @@ class Books extends Component {
         })
     }
 
+
+
     constructor(props) {
         super(props);
         this.state = { books: [], query: '' };
     }
 
     updateQuery = (query) => {
-        this.setState({ query: query.trim() })
+        //this.setState({ query: query.trim() })
+        BooksAPI.search(query.trim()).then((books)=>{
+            this.setState({ books: books })
+        });
     }
 
     clearQuery = () => {
         this.setState({ query: '' })
     }
 
+    search = ()=>{
+        BooksAPI.search(this.state.query).then((books)=>{
+            this.setState({ books: books })
+        });
+    }
+
     render() {
         const { query, books } = this.state
-        let showingBooks
+        let showingBooks=[]
         if (query && query.length > 3) {
+            this.search();
+        } else {
             const match = new RegExp(escapeRegExp(query), 'i')
             showingBooks = books.filter((book) => match.test(book.title))
-        } else {
-            showingBooks = books
         }
         showingBooks.sort(sortBy('title'))
 
@@ -43,7 +54,7 @@ class Books extends Component {
                 <header className="row">
                     <div className="col-12">
 
-                        <Link className='back-btn' to='/'><i class="fa fa-arrow-left" aria-hidden="true"></i></Link>
+                        <Link className='back-btn' to='/'><i className="fa fa-arrow-left" aria-hidden="true"></i></Link>
                         <div id="title" className="navbar text-color-chocolate top">Looking for a new book</div>
                     </div>
                 </header>
@@ -65,11 +76,11 @@ class Books extends Component {
                             <div className="col-3 col-md-6" key={index}>
                                 <BookCard
                                     id={book.id}
-                                    title={book.title}
-                                    description={book.description}
-                                    imageLink={book.imageLinks.smallThumbnail}
-                                    previewLink={book.previewLink}
-                                verifyHome={false}/>
+                                    title={book.title!== undefined ? book.title:"No description"}
+                                    description={book.description !== undefined ? book.description : "No description"}
+                                    imageLink={book.imageLinks !== undefined ? book.imageLinks.smallThumbnail :""}
+                                    previewLink={book.previewLink !== undefined ? book.previewLink:""}
+                                    verifyWantToRead={true}/>
                             </div>
                             ))}
 

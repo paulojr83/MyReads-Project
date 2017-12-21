@@ -6,7 +6,7 @@ class Home extends  Component{
 
     constructor(props) {
         super(props);
-        this.state = { books: [], booksRead: [], booksWant: [], booksReading: []};
+        this.state = { booksRead: [], booksWantToRead: [], booksCurrentlyReading: []};
     }
 
     componentWillMount(){
@@ -17,21 +17,22 @@ class Home extends  Component{
         let myBooks = window.localStorage.getItem('myBooks') || '[]';
         let books= JSON.parse(myBooks);
 
-        books.find(function (book, index) {
-            if(book.status == 'read'){
-                booksRead.push(book);
-            }else if(book.status == 'want') {
-                booksWant.push(book);
-            }else if(book.status == 'reading') {
-                booksReading.push(book);
+        for (var i=0; i < books.length; i++){
+            if(books[i].shelf == 'read'){
+                booksRead.push(books[i]);
+            }else if(books[i].shelf == 'wantToRead') {
+                booksWant.push(books[i]);
+            }else if(books[i].shelf == 'currentlyReading') {
+                booksReading.push(books[i]);
             }
-        })
-        this.setState({ myBooks: JSON.parse( myBooks ), booksRead: booksRead , booksReading: booksReading, booksWant: booksWant });
+        }
+        this.setState({ myBooks: JSON.parse( myBooks ), booksRead: booksRead , booksCurrentlyReading: booksReading, booksWantToRead: booksWant });
     }
 
     updateLocalStorage =(items) =>{
         window.localStorage.setItem('myBooks', JSON.stringify(items));
     }
+
 
     render(){
 
@@ -52,19 +53,22 @@ class Home extends  Component{
                 </div>
 
                 <div className="row">
-                    <If test={this.state.booksReading.length == 0}>
+                    <If test={this.state.booksCurrentlyReading.length == 0}>
                         <div className="label">You are not reading any books yet.</div>
                     </If>
-                    {this.state.booksReading.map((book, index) => (
+                    {this.state.booksCurrentlyReading.map((book, index) => (
 
-                      <div className="col-3 col-md-6">
+                      <div className="col-3 col-md-6" key={book.id}>
                           <BookCard
                               id={book.id}
                               title={book.title}
                               description={book.description}
                               imageLink={book.imageLink}
                               previewLink={book.previewLink}
-                              verifyHome={true}/>
+                              verifyWantToRead={false}
+                              verifyCurrentlyReading={false}
+                              verifyRead={true}
+                              verifyRemove={true}/>
                       </div>
 
                     ))}
@@ -78,19 +82,22 @@ class Home extends  Component{
                   <h2 className="card-header text-color-chocolate text-read">Want to Read</h2>
                 </div>
                 <div className="row">
-                    <If test={this.state.booksWant.length == 0}>
+                    <If test={this.state.booksWantToRead.length == 0}>
                         <div className="label">You don't have any book to reads yet.</div>
                     </If>
-                  {this.state.booksWant.map((book, index) => (
+                  {this.state.booksWantToRead.map((book, index) => (
 
-                      <div className="col-3 col-md-6">
+                      <div className="col-3 col-md-6"  key={book.id}>
                           <BookCard
                               id={book.id}
                               title={book.title}
                               description={book.description}
                               imageLink={book.imageLink}
                               previewLink={book.previewLink}
-                              verifyHome={true}/>
+                              verifyWantToRead={false}
+                              verifyCurrentlyReading={true}
+                              verifyRead={false}
+                              verifyRemove={true}/>
                       </div>
                   ))}
 
@@ -108,14 +115,17 @@ class Home extends  Component{
                     </If>
                       {this.state.booksRead.map((book, index) => (
 
-                          <div className="col-3 col-md-6">
+                          <div className="col-3 col-md-6"  key={book.id}>
                               <BookCard
                                   id={book.id}
                                   title={book.title}
                                   description={book.description}
                                   imageLink={book.imageLink}
                                   previewLink={book.previewLink}
-                                  verifyHome={true}/>
+                                  verifyWantToRead={false}
+                                  verifyCurrentlyReading={true}
+                                  verifyRead={true}
+                                  verifyRemove={true}/>
                           </div>
 
                       ))}

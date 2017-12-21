@@ -3,15 +3,24 @@ import './App.css'
 import Books from './Books'
 import Home from './Home'
 import { Route } from 'react-router-dom'
-import * as BooksAPI  from './BooksAPI';
 
 class BooksApp extends Component {
+
+    state = {
+        myBooks: []
+    }
+    removeBook = (book) => {
+        this.setState( (state) => ({
+            myBooks: state.myBooks.filter((_) => _.id !== book.id)
+        }))
+
+    }
 
   render() {
     return (
         <div className="page-wrapper">
             <Route exact path='/' render={() => (
-                <Home/>
+                <Home onDeleteBook={this.removeBook} contacts={this.state.myBooks}/>
             )}/>
 
             <Route exact path='/books' render={() => (
