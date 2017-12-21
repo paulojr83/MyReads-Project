@@ -14,8 +14,6 @@ class Books extends Component {
         })
     }
 
-
-
     constructor(props) {
         super(props);
         this.state = { books: [], query: '' };
@@ -43,14 +41,18 @@ class Books extends Component {
         let showingBooks=[]
         if (query && query.length > 3) {
             this.search();
+            return;
         } else {
             const match = new RegExp(escapeRegExp(query), 'i')
-            showingBooks = books.filter((book) => match.test(book.title))
+            if(books instanceof Array ){
+                showingBooks = books.filter((book) => match.test(book !== undefined ? book.title: ""))
+            }
+
         }
         showingBooks.sort(sortBy('title'))
 
         return (
-            <div className="container">
+            <div className="container fixed-top">
                 <header className="row">
                     <div className="col-12">
 
@@ -68,19 +70,20 @@ class Books extends Component {
                     </div>
                 </section>
                 <If test={showingBooks.length > 0} >
-                <section className="content">
+                <section className="content content-top">
                     <div className="col-12 col-4">
                         <div className="row">
 
                             {showingBooks.map((book, index) => (
                             <div className="col-3 col-md-6" key={index}>
                                 <BookCard
-                                    id={book.id}
-                                    title={book.title!== undefined ? book.title:"No description"}
+                                    id={book.id }
+                                    title={book.title !== undefined ? book.title:"No description"}
                                     description={book.description !== undefined ? book.description : "No description"}
                                     imageLink={book.imageLinks !== undefined ? book.imageLinks.smallThumbnail :""}
                                     previewLink={book.previewLink !== undefined ? book.previewLink:""}
-                                    verifyWantToRead={true}/>
+                                    verifyWantToRead={true}
+                                    />
                             </div>
                             ))}
 

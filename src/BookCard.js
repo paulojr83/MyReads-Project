@@ -7,7 +7,7 @@ class BookCard extends Component{
 
     constructor(props) {
         super(props);
-        this.state = { myBooks: [],
+            this.state = { myBooks: [],
             verifyRemove:false,
             verifyRead: false,
             verifyWantToRead: false,
@@ -24,9 +24,15 @@ class BookCard extends Component{
         description: PropTypes.string.isRequired,
         imageLink: PropTypes.string.isRequired,
         previewLink: PropTypes.string.isRequired,
-        verifyWantToRead: PropTypes.bool.isRequired
+        verifyWantToRead: PropTypes.bool.isRequired,
+        updateLists: PropTypes.func.isRequired
     }
 
+    updateLists(){
+        const myBooks = window.localStorage.getItem('myBooks') || '[]';
+        if (this.props.updateLists)
+            this.props.updateLists(JSON.parse( myBooks ))
+    }
     componentWillMount(){
         const myBooks = window.localStorage.getItem('myBooks') || '[]';
         this.setState({ myBooks: JSON.parse( myBooks )});
@@ -38,39 +44,11 @@ class BookCard extends Component{
     }
 
     reading = (book)=>{
-        let books  = this.state.myBooks;
-        let indexToRemove;
-
-        books.find(function(value, index){
-            if(value.id == book.id){
-                indexToRemove= index;
-                return;
-            }
-        });
-        book.shelf = "currentlyReading";
-        books.splice(indexToRemove,1);
-        books.push(book);
-        window.localStorage.setItem('myBooks', JSON.stringify(books));
-        this.setState({ myBooks: JSON.stringify( books )});
-        BooksAPI.update(book, book.shelf)
+        this.updateShelf(book, "currentlyReading")
     }
 
     read = (book)=> {
-        let books  = this.state.myBooks;
-        let indexToRemove;
-
-        books.find(function(value, index){
-            if(value.id == book.id){
-                indexToRemove= index;
-                return;
-            }
-        });
-        book.shelf = "read";
-        books.splice(indexToRemove,1);
-        books.push(book);
-        window.localStorage.setItem('myBooks', JSON.stringify(books));
-        this.setState({ myBooks: JSON.stringify( books )});
-        BooksAPI.update(book, book.shelf)
+        this.updateShelf(book, "read")
     }
 
     onDeleteBook = (book)=>{
@@ -99,8 +77,26 @@ class BookCard extends Component{
         this.setState({showConfirmRemove : false});
     }
 
-    //["wantToRead", "currentlyReading", "read"]
+    updateShelf(book, shelf){
+        let books  = this.state.myBooks;
+        let indexToRemove;
+        books.find(function(value, index){
+            if(value.id == book.id){
+                indexToRemove= index;
+                return;
+            }
+        });
 
+        books.splice(indexToRemove,1);
+        book.shelf = shelf;
+        books.push(book);
+
+        window.localStorage.setItem('myBooks', JSON.stringify(books));
+        this.setState({ myBooks: JSON.stringify( books )});
+
+        BooksAPI.update(book, book.shelf)
+
+    }
     wantToRead= (book) =>{
         if( book !== undefined && book.id !== undefined && book.id !== Object){
             this.setState(function (prev) {
@@ -127,12 +123,12 @@ class BookCard extends Component{
         }else{
             this.setState({showError:true});
         }
-
+        browserHistory.push('/')
     }
 
 
     render(){
-        const { id, title, description, imageLink, previewLink, verifyWantToRead, showError, verifyRemove, verifyRead, verifyCurrentlyReading } = this.props
+        const { id, title, description, imageLink, previewLink, verifyWantToRead, showError, verifyRemove, verifyRead, verifyCurrentlyReading,  } = this.props
         const book ={id:id, title:title, description:description, imageLink:imageLink, previewLink:previewLink};
         return(
             <div className="col-12">

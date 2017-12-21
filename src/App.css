@@ -24,13 +24,20 @@
   background-position: right;
   font-size: 1.2em;
   outline: none;
+  margin-top: 1px;
   width: 100%;
-  margin-top: 30px;
-
 }
 
 .list-book-top {
   top: 0;
   border-bottom: 2px solid #95a8d4;
   display: flex;
+}
+
+.fixed-top{
+  margin-top: -30px;
+}
+
+.content-top{
+  margin-top: 15px;
 }

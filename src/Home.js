@@ -4,35 +4,32 @@ import { Link } from 'react-router-dom'
 import If from "./If";
 class Home extends  Component{
 
-    constructor(props) {
-        super(props);
-        this.state = { booksRead: [], booksWantToRead: [], booksCurrentlyReading: []};
-    }
+    state = { myBooks: [], booksRead: [], booksWantToRead: [], booksCurrentlyReading: []};
 
     componentWillMount(){
-        let booksRead= [];
-        let booksWant= [];
-        let booksReading= [];
-
         let myBooks = window.localStorage.getItem('myBooks') || '[]';
         let books= JSON.parse(myBooks);
+        this.updateLists(books);
+    }
 
-        for (var i=0; i < books.length; i++){
-            if(books[i].shelf == 'read'){
-                booksRead.push(books[i]);
-            }else if(books[i].shelf == 'wantToRead') {
-                booksWant.push(books[i]);
-            }else if(books[i].shelf == 'currentlyReading') {
-                booksReading.push(books[i]);
+    updateLists(books){
+        if(books !== undefined) {
+            let booksRead = [];
+            let booksWant = [];
+            let booksReading = [];
+
+            for (var i = 0; i < books.length; i++) {
+                if (books[i].shelf == 'read') {
+                    booksRead.push(books[i]);
+                } else if (books[i].shelf == 'wantToRead') {
+                    booksWant.push(books[i]);
+                } else if (books[i].shelf == 'currentlyReading') {
+                    booksReading.push(books[i]);
+                }
             }
+            this.setState({myBooks:books,booksRead: booksRead, booksCurrentlyReading: booksReading, booksWantToRead: booksWant});
         }
-        this.setState({ myBooks: JSON.parse( myBooks ), booksRead: booksRead , booksCurrentlyReading: booksReading, booksWantToRead: booksWant });
     }
-
-    updateLocalStorage =(items) =>{
-        window.localStorage.setItem('myBooks', JSON.stringify(items));
-    }
-
 
     render(){
 
@@ -68,7 +65,9 @@ class Home extends  Component{
                               verifyWantToRead={false}
                               verifyCurrentlyReading={false}
                               verifyRead={true}
-                              verifyRemove={true}/>
+                              verifyRemove={true}
+                              updateLists={this.updateLists(this.state.books)}
+                              />
                       </div>
 
                     ))}
@@ -97,7 +96,8 @@ class Home extends  Component{
                               verifyWantToRead={false}
                               verifyCurrentlyReading={true}
                               verifyRead={false}
-                              verifyRemove={true}/>
+                              verifyRemove={true}
+                              updateLists={this.updateLists}/>
                       </div>
                   ))}
 
@@ -124,8 +124,9 @@ class Home extends  Component{
                                   previewLink={book.previewLink}
                                   verifyWantToRead={false}
                                   verifyCurrentlyReading={true}
-                                  verifyRead={true}
-                                  verifyRemove={true}/>
+                                  verifyRead={false}
+                                  verifyRemove={true}
+                                  updateLists={this.updateLists}/>
                           </div>
 
                       ))}
