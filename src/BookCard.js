@@ -9,6 +9,7 @@ class BookCard extends Component{
         super(props);
         this.handleChange = this.handleChange.bind(this);
     }
+    state = {value:"none"}
   static propTypes = {
       id:PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
@@ -16,8 +17,13 @@ class BookCard extends Component{
       imageLink: PropTypes.string.isRequired,
       previewLink: PropTypes.string.isRequired,
       shelf: PropTypes.string,
-      authors:PropTypes.array
+      authors:PropTypes.array,
+      isValidNew:PropTypes.bool,
+      arrayOptions:PropTypes.array,
   }
+    componentWillMount(){
+
+    }
 
   handleSubmit = (shelf,book) => {
     if (this.props.onCreateSaveBook){
@@ -46,8 +52,8 @@ class BookCard extends Component{
                          style={{ width: 128, height: 193,
                            backgroundImage: 'url('+imageLink+')' }} />
                       <div className="book-shelf-changer" >
-                          <select id="shelf" onChange={(e) =>this.handleChange(book, e)}>
-                              <option value="none" disabled selected >Move to...</option>
+                          <select value="none" id="shelf" onChange={(e) =>this.handleChange(book, e)}>
+                              <option value="none" disabled="disabled" >Move to...</option>
                               <option value="currentlyReading">Currently Reading</option>
                               <option value="wantToRead" >Want to Read</option>
                               <option value="read">Read</option>

@@ -63,11 +63,10 @@ class BooksApp extends Component {
                     myBooks.push(newBook);
                     this.updateLocalStorage(myBooks);
                 }else{
-                    if(shelf !== 'wantToRead' && shelf !== book.shelf){
+                    if(shelf !== book.shelf){
                         this.updateShelf(book,shelf);
-                    }else{
-                        this.setState({showAdded:true});
                     }
+                    this.setState({showAdded:true});
                 }
                 return {myBooks};
             })
