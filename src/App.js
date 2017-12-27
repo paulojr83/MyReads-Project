@@ -2,17 +2,12 @@ import React,{Component} from 'react'
 import './App.css'
 import SweetAlert from 'sweetalert-react';
 import BookCard from './BookCard'
-import If from "./If";
+import { If, Then, Else } from 'react-if';
 import * as BooksAPI  from './BooksAPI';
 
 class BooksApp extends Component {
+
   state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
     showSearchPage: false,
     books:[],
     myBooks:[],
@@ -25,8 +20,20 @@ class BooksApp extends Component {
 
     updateQuery = (query) => {
         if(query.length >= 3){
-            BooksAPI.search(query.trim()).then((books)=>{
-                if(books instanceof  Array){
+            let myBooks = JSON.parse(window.localStorage.getItem('myBooks') || '[]');
+            BooksAPI.search(query.trim()).then((data)=>{
+                if(data instanceof  Array){
+                  let books=[]
+
+                  for (var i=0; i < data.length; i++){
+                      let book=  myBooks.filter((_)=>  _.id === data[i].id);
+                      if(book.length !== 0){
+                          books.push(book[0])
+                      }else {
+                          books.push(data[i])
+                      }
+                  }
+
                   this.setState({ books: books })
                     return
                 }
@@ -39,17 +46,17 @@ class BooksApp extends Component {
         this.setState({ myBooks: JSON.parse(myBooks)});
     }
 
-    updateLocalStorage =(books) =>{
-        window.localStorage.setItem('myBooks', JSON.stringify(books));
-        this.setState({showAddBook:true});
+    updateLocalStorage =(myBooks) =>{
+        window.localStorage.setItem('myBooks', JSON.stringify(myBooks));
+        this.setState({showAddBook:true})
     }
 
     saveNewBook = (shelf, book) =>{
         if( book !== undefined && book.id !== undefined && book.id !== Object){
             this.setState(function (prev) {
                 let { myBooks =[]} = prev;
-                let oldBook = myBooks.filter((_)=> book.id == _.id);
-                if(oldBook.length == 0){
+                let oldBook = myBooks.filter((_)=> book.id === _.id);
+                if(oldBook.length === 0){
                     const newBook = {
                         id: book.id,
                         title: book.title,
@@ -60,13 +67,26 @@ class BooksApp extends Component {
                         shelf:shelf
                     };
 
+                    if(this.state.books.length > 0){
+                        let indexToRemove;
+                        this.state.books.find(function(value, index){
+                            if(value.id === book.id){
+                                indexToRemove= index;
+                                return;
+                            }
+                        });
+                        this.state.books.splice(indexToRemove,1);
+                        this.state.books.push(newBook);
+                    }
+
                     myBooks.push(newBook);
                     this.updateLocalStorage(myBooks);
                 }else{
-                    if(shelf !== book.shelf){
+                    if(book.shelf !== undefined && shelf !== book.shelf){
                         this.updateShelf(book,shelf);
+                    }else{
+                        this.setState({showAdded:true});
                     }
-                    this.setState({showAdded:true});
                 }
                 return {myBooks};
             })
@@ -80,7 +100,7 @@ class BooksApp extends Component {
         let books  = this.state.myBooks;
         let indexToRemove;
         books.find(function(value, index){
-            if(value.id == book.id){
+            if(value.id === book.id){
                 indexToRemove= index;
                 return;
             }
@@ -93,6 +113,10 @@ class BooksApp extends Component {
             BooksAPI.update(book, shelf);
         }
         window.localStorage.setItem('myBooks', JSON.stringify(books));
+    }
+
+    showSearchPage =()=> {
+        this.setState({ showSearchPage: true })
     }
 
     render() {
@@ -130,15 +154,15 @@ class BooksApp extends Component {
                                 id={book.id }
                                 title={book.title !== undefined ? book.title:"No description"}
                                 description={book.description !== undefined ? book.description : "No description"}
-                                imageLink={book.imageLinks !== undefined ? book.imageLinks.smallThumbnail :""}
+                                imageLink={book.imageLinks !== undefined ? book.imageLinks.smallThumbnail :book.imageLink}
                                 previewLink={book.previewLink !== undefined ? book.previewLink:""}
                                 authors={book.authors instanceof Array ? book.authors:[]}
+                                isValidNew={true}
+                                shelf={book.shelf}
                             />
                         </div>
-
                      ))}
                     </ol>
-
             </div>
             </div>
           </div>
@@ -154,28 +178,31 @@ class BooksApp extends Component {
                   <div className="bookshelf-books">
                     <ol className="books-grid">
 
-                        <If test={this.state.myBooks.length == 0}>
-                            <div className="label">You don't have any book to reads yet.</div>
+                        <If condition={this.state.myBooks.length === 0 ? true:false}>
+                            <Then>
+                                <span className="label" >You don't have any book to reads yet. </span>
+                            </Then>
+                            <Else>
+                                {this.state.myBooks.map((book, index) => (
+                                    <If condition={book.shelf === 'currentlyReading'} key={book.id}>
+                                        <BookCard
+                                            onCreateSaveBook={(shelf, book)=> {
+                                                this.saveNewBook(shelf, book)
+                                            }}
+                                            id={book.id }
+                                            title={book.title}
+                                            description={book.description !== undefined ? book.description:""}
+                                            imageLink={book.imageLink}
+                                            previewLink={book.previewLink !== undefined ? book.previewLink:""}
+                                            authors={book.authors instanceof Array ? book.authors:[]}
+                                            shelf={book.shelf}
+                                        />
+                                    </If>
+                                ))}
+                            </Else>
+
                         </If>
-                        {this.state.myBooks.map((book, index) => (
-                            <If test={book.shelf === 'currentlyReading'} key={book.id}>
 
-                            <BookCard
-
-                                onCreateSaveBook={(shelf, book)=> {
-                                    this.saveNewBook(shelf, book)
-                                }}
-                                id={book.id }
-                                title={book.title}
-                                description={book.description !== undefined ? book.description:""}
-                                imageLink={book.imageLink}
-                                previewLink={book.previewLink !== undefined ? book.previewLink:""}
-                                authors={book.authors instanceof Array ? book.authors:[]}
-                                shelf={book.shelf}
-                            />
-
-                            </If>
-                        ))}
                     </ol>
                   </div>
                 </div>
@@ -183,26 +210,29 @@ class BooksApp extends Component {
                   <h2 className="bookshelf-title">Want to Read</h2>
                   <div className="bookshelf-books">
                     <ol className="books-grid">
-                        <If test={this.state.myBooks.length == 0}>
+                        <If condition={this.state.myBooks.length === 0}>
+                            <Then>
                             <div className="label">You don't have any book to reads yet.</div>
+                            </Then>
+                            <Else>
+                                {this.state.myBooks.map((book, index) => (
+                                    <If condition={book.shelf === 'wantToRead'} key={book.id}>
+                                        <BookCard
+                                            onCreateSaveBook={(shelf, book)=> {
+                                                this.saveNewBook(shelf, book)
+                                            }}
+                                            id={book.id }
+                                            title={book.title}
+                                            description={book.description !== undefined ? book.description:""}
+                                            imageLink={book.imageLink}
+                                            previewLink={book.previewLink !== undefined ? book.previewLink:""}
+                                            authors={book.authors instanceof Array ? book.authors:[]}
+                                            shelf={book.shelf}
+                                        />
+                                    </If>
+                                ))}
+                            </Else>
                         </If>
-                        {this.state.myBooks.map((book, index) => (
-                            <If test={book.shelf === 'wantToRead'} key={book.id}>
-                            <BookCard
-                                onCreateSaveBook={(shelf, book)=> {
-                                    this.saveNewBook(shelf, book)
-                                }}
-                                id={book.id }
-                                title={book.title}
-                                description={book.description !== undefined ? book.description:""}
-                                imageLink={book.imageLink}
-                                previewLink={book.previewLink !== undefined ? book.previewLink:""}
-                                authors={book.authors instanceof Array ? book.authors:[]}
-                                shelf={book.shelf}
-                            />
-                            </If>
-                        ))}
-
                     </ol>
                   </div>
                 </div>
@@ -211,33 +241,36 @@ class BooksApp extends Component {
                   <h2 className="bookshelf-title">Read</h2>
                   <div className="bookshelf-books">
                     <ol className="books-grid">
-                        <If test={this.state.myBooks.length == 0}>
+                        <If condition={this.state.myBooks.length === 0}>
+                            <Then>
                             <div className="label">You don't have any book to read yet.</div>
+                            </Then>
+                            <Else>
+                                {this.state.myBooks.map((book, index) => (
+                                    <If condition={book.shelf === 'read'} key={book.id}>
+                                        <BookCard
+                                            onCreateSaveBook={(shelf, book)=> {
+                                                this.saveNewBook(shelf, book)
+                                            }}
+                                            id={book.id }
+                                            title={book.title}
+                                            description={book.description !== undefined ? book.description:""}
+                                            imageLink={book.imageLink}
+                                            previewLink={book.previewLink !== undefined ? book.previewLink:""}
+                                            authors={book.authors instanceof Array ? book.authors:[]}
+                                            shelf={book.shelf}
+                                        />
+                                    </If>
+                                ))}
+                            </Else>
                         </If>
-                        {this.state.myBooks.map((book, index) => (
-                            <If test={book.shelf === 'read'} key={book.id}>
-                            <BookCard
-                                onCreateSaveBook={(shelf, book)=> {
-                                    this.saveNewBook(shelf, book)
-                                }}
-                                id={book.id }
-                                title={book.title}
-                                description={book.description !== undefined ? book.description:""}
-                                imageLink={book.imageLink}
-                                previewLink={book.previewLink !== undefined ? book.previewLink:""}
-                                authors={book.authors instanceof Array ? book.authors:[]}
-                                shelf={book.shelf}
-                            />
-                            </If>
-                        ))}
-
                     </ol>
                   </div>
                 </div>
               </div>
             </div>
             <div className="open-search">
-              <a onClick={() => this.setState({ showSearchPage: true })}>Add a book</a>
+              <a onClick={this.showSearchPage}>Add a book</a>
             </div>
           </div>
         )}
@@ -257,7 +290,7 @@ class BooksApp extends Component {
 
         <SweetAlert
             show={this.state.showAddBook}
-            title={"The book " + book.title + " was add."}
+            title={"The book was add."}
             confirmButtonColor="green"
             onConfirm={() => this.setState({ showAddBook: false })}
         />
