@@ -19,23 +19,10 @@ class BookCard extends React.Component {
       isValidNew:PropTypes.bool,
       myBooks:PropTypes.array,
     }
-
-    handleSubmit = (shelf,book) => {
-    if (this.props.onCreateSaveBook){
-        this.props.onCreateSaveBook(shelf, book)
-    }
-    }
+    
     handleChange= (book, e) => {
         e.preventDefault()
         let shelf = e.target.value
-        if (this.props.onCreateSaveBook){
-            this.props.onCreateSaveBook(shelf, book)
-        }
-    }
-
-    handleWantToRead= (book, e) => {
-        e.preventDefault()
-        let shelf = 'wantToRead'
         if (this.props.onCreateSaveBook){
             this.props.onCreateSaveBook(shelf, book)
         }
@@ -50,36 +37,17 @@ class BookCard extends React.Component {
                 <div className="book">
                   <div className="book-top">
                     <div className="book-cover"  id='imageLink' style={{ width: 128, height: 193, backgroundImage: 'url('+imageLink+')' }} />
-                          <If condition={isValidNew !== undefined && isValidNew === true}>
-                              <Then>
-                              <If condition={shelf !== undefined}>
-                                  <Then>
-                                      <span className="currently-shelf">
-                                          { shelf == 'currentlyReading' ? 'Currently Reading':''}
-                                          { shelf == 'wantToRead' ? 'Want to Read':''}
-                                          { shelf == 'read' ? 'Read':''}
-                                      </span>
-                                  </Then>
-                                    <Else>
-                                      <div className="book-shelf-want-to-read" onClick={(e) =>this.handleWantToRead(book, e)}>
-                                          {this.props.children}
-                                      </div>
-                                    </Else>
-                              </If>
-                              </Then>
-
-                          <Else>
-                              <div className="book-shelf-changer" >
-                                <select value={shelf} id="shelf" onChange={(e) =>this.handleChange(book, e)} className="select-options">
-                                  <option value="" disabled="disabled" >Move to...</option>
-                                  <option value="currentlyReading"  className={shelf === 'currentlyReading'? 'blue':''}>Currently Reading</option>
-                                  <option value="wantToRead"  className={shelf === 'wantToRead'? 'blue':''} >Want to Read</option>
-                                  <option value="read" className={shelf === 'read'? 'blue':''}>Read</option>
-                                  <option value="none" >None</option>
-                                </select>
-                              </div>
-                          </Else>
-                          </If>
+                          
+                    <div className="book-shelf-changer" >
+                    <select value={shelf} id="shelf" onChange={(e) =>this.handleChange(book, e)} className="select-options">
+                        <option value="" disabled="disabled" >Move to...</option>
+                        <option value="currentlyReading"  className={shelf === 'currentlyReading'? 'blue':''}>Currently Reading</option>
+                        <option value="wantToRead"  className={shelf === 'wantToRead'? 'blue':''} >Want to Read</option>
+                        <option value="read" className={shelf === 'read'? 'blue':''}>Read</option>
+                        <option value="none" >None</option>
+                    </select>
+                    </div>
+                          
                   </div>
 
                   <div className="book-title" id='title'>{title}</div>
