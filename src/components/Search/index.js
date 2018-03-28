@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 import * as BooksAPI from '../../services/BooksAPI'
 
-class AddBook extends Component {
+class Search extends Component {
 
     constructor(props) {
         super(props);
@@ -14,7 +14,7 @@ class AddBook extends Component {
 
     saveNewBook= (shelf, book) => {        
         if (this.props.saveNewBook){
-            this.props.saveNewBook(shelf, book)
+            this.props.saveNewBook(shelf, book)            
         }
     }
 
@@ -46,7 +46,7 @@ class AddBook extends Component {
     }
 
     render(){
-        const book ={};
+        
         return(
         <div className="search-books">
 
@@ -85,4 +85,4 @@ class AddBook extends Component {
 
 }
 
-export default AddBook
+export default Search

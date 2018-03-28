@@ -44,13 +44,19 @@ class BookCard extends React.Component {
                         <option value="currentlyReading"  className={shelf === 'currentlyReading'? 'blue':''}>Currently Reading</option>
                         <option value="wantToRead"  className={shelf === 'wantToRead'? 'blue':''} >Want to Read</option>
                         <option value="read" className={shelf === 'read'? 'blue':''}>Read</option>
-                        <option value="none" >None</option>
+                        { !isValidNew &&
+                            <option value="none" >None</option>
+                        }                        
                     </select>
                     </div>
                           
                   </div>
 
                   <div className="book-title" id='title'>{title}</div>
+                    <div className="currrently-shelf">{shelf === 'currentlyReading' && isValidNew ? 'Currently Reading':''}</div>
+                    <div className="currrently-shelf">{shelf === 'wantToRead'  && isValidNew ? 'Want to Read':''}</div>
+                    <div className="currrently-shelf">{shelf === 'read'  && isValidNew  ? 'Read':''}</div>
+
                     <div className="book-authors" id='author'>
                         <ol>
                             {book.authors.map((author, index) => (

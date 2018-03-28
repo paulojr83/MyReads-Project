@@ -4,7 +4,7 @@ import SweetAlert from 'sweetalert-react';
 import { If, Then, Else } from 'react-if';
 import BookCard  from '../BookCard';
 import { Link, Route } from 'react-router-dom'
-import AddBook from '../AddBook'
+import Search from '../Search'
 
 import * as BooksAPI from '../../services/BooksAPI'
 
@@ -16,9 +16,6 @@ class BooksApp extends Component {
     myBooks:[],
     showAdded:false,
     showError:false,
-    booksRead:[],
-    booksCurrentlyReading:[],
-    booksWantToRead:[],
   }
 
     
@@ -27,19 +24,7 @@ class BooksApp extends Component {
     }
     componentDidMount(){
         let myBooks = window.localStorage.getItem('myBooks') || '[]';
-        let booksRead=[]
-        let booksCurrentlyReading=[]
-        let booksWantToRead=[]
-
         this.setState({ myBooks: JSON.parse(myBooks)});
-        
-        for (var i =0; i < this.state.myBooks.length; i++){
-            if(this.state.myBooks[i].shelf === 'currentlyReading'){                    
-                booksCurrentlyReading.push(this.state.myBooks[i])
-            }
-        }
-
-        this.setState({ booksCurrentlyReading: booksCurrentlyReading});
     }
 
     updateLocalStorage =(myBooks) =>{
@@ -89,7 +74,7 @@ class BooksApp extends Component {
         }else{
             this.setState({showError:true});
         }
-
+        
     }
 
     updateShelf(book, shelf){
@@ -120,8 +105,8 @@ class BooksApp extends Component {
     return (
         
       <div className="app">
-           <Route exact path="/addBook" render={() => (
-               <AddBook myBooks={this.state.myBooks}  
+           <Route exact path="/search" render={() => (
+               <Search myBooks={this.state.myBooks}  
                     saveNewBook={(shelf, book)=> {
                         this.saveNewBook(shelf, book)
                 }}/>
@@ -235,7 +220,7 @@ class BooksApp extends Component {
             </div>
             <div className="open-search">
               <Link                 
-                to="/addBook"                
+                to="/search"                
               >Add a book</Link>
             </div>
           </div>

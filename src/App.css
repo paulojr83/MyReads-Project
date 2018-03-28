@@ -139,12 +139,14 @@ body, .app {
 .book {
   width: 150px;
 }
-.book-title,
+
 .book-authors {
-  font-size: 0.8em;
+  font-size: 0.7em;
+  color: #999;
 
 }
 .book-title {
+  font-size: 0.8em;
   margin-top: 10px;
   max-height: 180px;
   max-width: 200px;
@@ -152,9 +154,6 @@ body, .app {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-.book-authors {
-  color: #999;
 }
 
 .book-top {
@@ -475,4 +474,33 @@ transform: translatey(-6px);
 .accordion__link_active + ul{
   display: block;
   height: 100%;
+}
+
+.currrently-shelf{
+  width: 180px;
+  color: #e377bb;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }
