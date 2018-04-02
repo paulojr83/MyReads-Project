@@ -35,6 +35,7 @@ class BooksApp extends Component {
     saveNewBook = (shelf, book) =>{
         if( book !== undefined && book.id !== undefined && book.id !== Object){
             this.setState(function (prev) {
+                
                 let { myBooks =[]} = prev;
                 let oldBook = myBooks.filter((_)=> book.id === _.id);
                 if(oldBook.length === 0){
@@ -53,11 +54,17 @@ class BooksApp extends Component {
                         this.state.books.find(function(value, index){
                             if(value.id === book.id){
                                 indexToRemove= index;
-                                return;
                             }
                         });
-                        this.state.books.splice(indexToRemove,1);
-                        this.state.books.push(newBook);
+
+                        this.setState(state => ({
+                            books: state.books.books.splice(indexToRemove,1)
+                        }))
+
+                        this.setState(state => ({
+                            books: state.books.push(newBook)
+                        }))
+
                     }
 
                     myBooks.push(newBook);
@@ -69,7 +76,7 @@ class BooksApp extends Component {
                         this.setState({showAdded:true});
                     }
                 }
-                return {myBooks};
+                return {myBooks}
             })
         }else{
             this.setState({showError:true});
@@ -77,13 +84,12 @@ class BooksApp extends Component {
         
     }
 
-    updateShelf(book, shelf){
+    updateShelf=(book, shelf)=>{
         let books  = this.state.myBooks;
         let indexToRemove;
         books.find(function(value, index){
             if(value.id === book.id){
                 indexToRemove= index;
-                return;
             }
         });
 
@@ -123,78 +129,83 @@ class BooksApp extends Component {
                 <div className="bookshelf">
                   <h2 className="bookshelf-title">Want to Read</h2>
                   <div className="bookshelf-books">
-                    <ol className="books-grid">                       
+                                       
                         
                         <If condition={this.state.myBooks.length === 0}>
                             <Then>
                             <div className="label">You don't have any book to reads yet.</div>
                             </Then>
                             <Else>
-                                {this.state.myBooks.map((book, index) => (
-                                    <If condition={book.shelf === 'wantToRead'} key={book.id}>
-                                        <BookCard
-                                            onCreateSaveBook={(shelf, book)=> {
-                                                this.saveNewBook(shelf, book)
-                                            }}
-                                            id={book.id }
-                                            title={book.title}
-                                            description={book.description !== undefined ? book.description:""}
-                                            imageLink={book.imageLink}
-                                            previewLink={book.previewLink !== undefined ? book.previewLink:""}
-                                            authors={book.authors instanceof Array ? book.authors:[]}
-                                            shelf={book.shelf}
-                                        />
-                                    </If>
-                                ))}
+                                <ol className="books-grid">    
+                                    {this.state.myBooks.map((book, index) => (
+                                        <If condition={book.shelf === 'wantToRead'} key={book.id}>
+                                            <BookCard
+                                                onCreateSaveBook={(shelf, book)=> {
+                                                    this.saveNewBook(shelf, book)
+                                                }}
+                                                id={book.id }
+                                                title={book.title}
+                                                description={book.description !== undefined ? book.description:""}
+                                                imageLink={book.imageLink}
+                                                previewLink={book.previewLink !== undefined ? book.previewLink:""}
+                                                authors={book.authors instanceof Array ? book.authors:[]}
+                                                shelf={book.shelf}
+                                            />
+                                        </If>
+                                    ))}
+                                </ol>
                             </Else>
                         </If>
 
-                    </ol>
+                    
                   </div>
                 </div>
                 <div className="bookshelf">
                   <h2 className="bookshelf-title">Currently Reading</h2>
                   <div className="bookshelf-books">
-                    <ol className="books-grid">
+                    
 
                         <If condition={this.state.myBooks.length === 0 ? true:false}>
                             <Then>
                                 <span className="label" >You don't have any book to reads yet. </span>
                             </Then>
                             <Else>
-                                {this.state.myBooks.map((book, index) => (   
-                                    <If condition={book.shelf === 'currentlyReading'} key={book.id}>                                 
-                                        <BookCard
-                                            onCreateSaveBook={(shelf, book)=> {
-                                                this.saveNewBook(shelf, book)
-                                            }}
-                                            id={book.id }
-                                            title={book.title}
-                                            description={book.description !== undefined ? book.description:""}
-                                            imageLink={book.imageLink}
-                                            previewLink={book.previewLink !== undefined ? book.previewLink:""}
-                                            authors={book.authors instanceof Array ? book.authors:[]}
-                                            shelf={book.shelf}
-                                        />
-                                    </If>
-                                    
-                                ))}
+                                <ol className="books-grid">
+                                    {this.state.myBooks.map((book, index) => (   
+                                        <If condition={book.shelf === 'currentlyReading'} key={book.id}>                                 
+                                            <BookCard
+                                                onCreateSaveBook={(shelf, book)=> {
+                                                    this.saveNewBook(shelf, book)
+                                                }}
+                                                id={book.id }
+                                                title={book.title}
+                                                description={book.description !== undefined ? book.description:""}
+                                                imageLink={book.imageLink}
+                                                previewLink={book.previewLink !== undefined ? book.previewLink:""}
+                                                authors={book.authors instanceof Array ? book.authors:[]}
+                                                shelf={book.shelf}
+                                            />
+                                        </If>
+                                        
+                                    ))}
+                                </ol>
                             </Else>
 
                         </If>
-                    </ol>
+                    
                   </div>
                 </div>
 
                 <div className="bookshelf">
                   <h2 className="bookshelf-title">Readed</h2>
                   <div className="bookshelf-books">
-                    <ol className="books-grid">
+                    
                         <If condition={this.state.myBooks.length === 0}>
                             <Then>
                             <div className="label">You don't have any book to read yet.</div>
                             </Then>
                             <Else>
+                            <ol className="books-grid">
                                 {this.state.myBooks.map((book, index) => (
                                     <If condition={book.shelf === 'read'} key={book.id}>
                                         <BookCard
@@ -211,9 +222,10 @@ class BooksApp extends Component {
                                         />
                                     </If>
                                 ))}
+                                </ol>
                             </Else>
                         </If>
-                    </ol>
+                    
                   </div>
                 </div>
               </div>

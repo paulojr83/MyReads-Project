@@ -1,5 +1,4 @@
 import React, {Component} from 'react'
-import PropTypes from 'prop-types'
 import BookCard from '../BookCard'
 import { Link } from 'react-router-dom'
 
@@ -25,20 +24,25 @@ class Search extends Component {
     updateQuery = (query) => {
         if(query.length >= 3){
             let myBooks = JSON.parse(window.localStorage.getItem('myBooks') || '[]');
+            
             BooksAPI.search(query.trim()).then((data)=>{
                 if(data instanceof  Array){
                   let books=[]
 
-                  for (var i=0; i < data.length; i++){
-                      let book=  myBooks.filter((_)=>  _.id === data[i].id);
-                      if(book.length !== 0){
-                          books.push(book[0])
-                      }else {
-                          books.push(data[i])
-                      }
-                  }
+                    for (var i=0; i < data.length; i++){
+                        const book=  myBooks.filter((_)=>  _.id === data[i].id);
+                        if(book.length !== 0){
+                            books.push(book[0])
+                        }else {
+                            books.push(data[i])
+                        }
+                    }
 
-                  this.setState({ books: books })
+                    this.setState(
+                        state=>({
+                            books: books 
+                        })
+                    )
                     return
                 }
             });

@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { If, Then, Else } from 'react-if';
 
 class BookCard extends React.Component {
     constructor(props) {
