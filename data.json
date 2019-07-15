@@ -1,0 +1,21 @@
+{
+  "pets": [
+    {
+      "_id":"1",
+      "type":"Morto-Vivo",
+      "properties":[{"property":"Sombrio"}],
+      "skills":[
+        {"name":"Totalmente Curado", "descriptions":"Tem 100% de chance de remover status de Congelado, Petrificado, Atordoado no PET & dono."},
+        {"name":"Asilo", "descriptions":"Totalmente Curado tem 50% de causar imune a Congelar, Petrificar e Atordoar por 5 segundos."},
+        {"name":"Canto", "descriptions":"Aumenta +5% a quantidade de Cura para o Pet & Dono."},
+        {"name":"Curioso", "descriptions":"Aumenta +6 a quantidade de obtenção de Materiais Comuns enquanto aventura-se."},
+         {"name":"Labor: Assist. ao Sorriso I", "descriptions":"Aumenta 30% a eficiência de trabalho do Pet no Miss Smile."}
+        ],
+      "name":"Miyabi Ningyo",
+      "img_url":"miyabi_ningyo.png",
+      "requests":[
+        {"pets":[{"_id":"2"}, {"_id":"3"}]}
+      ]
+    }
+  ]
+}
